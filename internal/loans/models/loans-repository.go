@@ -2,11 +2,10 @@ package models
 
 import "github.com/google/uuid"
 
-type LoansService interface {
+type LoanRepository interface {
 	CreateLoan(loan *Loan) (*Loan, error)
+	ReturnBook(loan *Loan) error
 	GetLoan(id uuid.UUID) (*Loan, error)
+	GetActiveUserLoans(userId uuid.UUID) ([]*Loan, error)
 	GetAllLoans() ([]*Loan, error)
-	UpdateLoan(id uuid.UUID, loan *Loan) (*Loan, error)
-	DeleteLoan(id uuid.UUID) error
-	ReturnBook(loanId uuid.UUID) error
 }
