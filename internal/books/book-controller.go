@@ -37,13 +37,13 @@ func (b *BookController) CreateBook(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 	}
 
-	err := b.bookService.CreateBook(&book)
+	createdBook, err := b.bookService.CreateBook(&book)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create book"})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, book)
+	ctx.JSON(http.StatusCreated, createdBook)
 }
 
 func (b *BookController) GetBook(ctx *gin.Context) {
@@ -87,7 +87,7 @@ func (b *BookController) UpdateBook(ctx *gin.Context) {
 
 	updatedBook, err := b.bookService.UpdateBook(id, &book)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update book"})
 		return
 	}
 
