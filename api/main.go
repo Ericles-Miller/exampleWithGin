@@ -5,7 +5,6 @@ import (
 	"exampleWithGin/internal/loans"
 	"exampleWithGin/internal/users"
 	"log"
-
 	"github.com/gin-gonic/gin"
 )
 
