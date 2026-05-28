@@ -2,8 +2,8 @@ package services
 
 import (
 	"exampleWithGin/internal/users/models"
+	"exampleWithGin/pkg/appErrors"
 	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -16,17 +16,25 @@ func NewUserService(userRepo models.UserRepository) models.UserService {
 }
 
 func (u UserService) CreateUser(user *models.User) (*models.User, error) {
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
+	userAlreadyExists, _ := u.userRepo.GetUserByEmail(user.Email)
+	if userAlreadyExists != nil {
+		return nil, appErrors.ErrBadRequest
+	}
+
 	err := u.userRepo.CreateUser(user)
 	if err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 
 func (u UserService) GetUser(id uuid.UUID) (*models.User, error) {
-	return u.userRepo.GetUser(id)
+	user, err := u.userRepo.GetUser(id)
+	if err != nil {
+		return nil, appErrors.ErrNotFound
+	}
+	return user, nil
 }
 
 func (u UserService) GetAllUsers() ([]*models.User, error) {
@@ -34,15 +42,24 @@ func (u UserService) GetAllUsers() ([]*models.User, error) {
 }
 
 func (u UserService) UpdateUser(id uuid.UUID, user *models.User) (*models.User, error) {
-	user.UpdatedAt = time.Now()
-	err := u.userRepo.UpdateUser(id, user)
+	user, err := u.GetUser(id)
 	if err != nil {
-		return nil, err
+		return nil, appErrors.ErrNotFound
 	}
+	
+	user.UpdatedAt = time.Now()
+	err = u.userRepo.UpdateUser(id, user)
 
 	return user, nil
 }
 
 func (u UserService) DeleteUser(id uuid.UUID) error {
-	return u.userRepo.DeleteUser(id)
+	user, err := u.GetUser(id)
+	if err != nil {
+		return appErrors.ErrNotFound
+	}
+	
+	err = u.userRepo.DeleteUser(user.Id)
+
+	return nil
 }
