@@ -3,7 +3,6 @@ package services
 import (
 	"exampleWithGin/internal/users/models"
 	"time"
-
 	"github.com/google/uuid"
 )
 
