@@ -34,6 +34,21 @@ func (r *UserRepository) CreateUser(user *models.User) error {
 	return nil
 }
 
+func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+	result, err := r.queries.GetUserByEmail(context.Background(), email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.User{
+		Id:        result.ID,
+		Name:      result.Name,
+		Email:     result.Email,
+		CreatedAt: result.CreatedAt.Time,
+		UpdatedAt: result.UpdatedAt.Time,
+	}, nil
+}
+
 func (r *UserRepository) GetUser(id uuid.UUID) (*models.User, error) {
 	result, err := r.queries.GetUser(context.Background(), id)
 	if err != nil {
